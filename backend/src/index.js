@@ -1,25 +1,38 @@
+// server.js (or index.js)
 const express = require("express");
-const dotenv = require("dotenv"); // Import dotenv
+const dotenv = require("dotenv"); // Import dotenv for environment variable support
 const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const errorHandler = require("./utils/errorHandler");
 
-dotenv.config(); // Load environment variables from .env file
+// Load environment variables from .env file
+dotenv.config();
 
-// Initialize Express app
 const app = express();
 
-// Connect to MongoDB
-connectDB();
-
-// Middleware to parse JSON requests
+// Middleware to parse JSON request bodies
 app.use(express.json());
 
-// Example routes
+// Example route for basic check
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Port from environment variable or default to 5000
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Auth routes
+app.use("/api/auth", authRoutes);
+
+// Error handling middleware (should be placed after all routes)
+app.use(errorHandler);
+
+// Connect to the database
+connectDB();
+
+// Only start the server if not in test environment
+if (process.env.NODE_ENV !== "test") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
