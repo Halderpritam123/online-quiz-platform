@@ -1,12 +1,23 @@
 const express = require("express");
-const { signup, login } = require("../controllers/authController");
+const passport = require("passport");
+const {
+  signup,
+  login,
+  googleOAuth,
+  googleOAuthCallback,
+} = require("../controllers/authController");
 
 const router = express.Router();
 
-// Register the signup route
 router.post("/signup", signup);
-
-// Register the login route
 router.post("/login", login);
+
+// Google OAuth routes
+router.get("/google", googleOAuth);
+router.get(
+  "/google/callback",
+  passport.initialize(), // Initialize passport middleware
+  googleOAuthCallback
+);
 
 module.exports = router;
