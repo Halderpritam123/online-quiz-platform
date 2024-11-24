@@ -1,10 +1,14 @@
 const jwt = require("jsonwebtoken");
 
+// Authorization middleware
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ error: "Access denied. No token provided." });
+    return res.status(401).json({
+      success: false,
+      message: "Access denied. No token provided.",
+    });
   }
 
   try {
@@ -12,7 +16,10 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(400).json({ error: "Invalid token." });
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token.",
+    });
   }
 };
 

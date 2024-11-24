@@ -4,6 +4,7 @@ const session = require("express-session");
 const connectDB = require("./config/db");
 const passport = require("./middlewares/passport"); // Import passport from middleware
 const authRoutes = require("./routes/authRoutes");
+const quizRoutes = require("./routes/quizRoutes");
 const errorHandler = require("./utils/errorHandler");
 
 dotenv.config();
@@ -34,6 +35,9 @@ app.get("/", (req, res) => {
 
 // Auth routes
 app.use("/api/auth", authRoutes);
+
+// Quiz routes
+app.use("/api/quiz", quizRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

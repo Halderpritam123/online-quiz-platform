@@ -1,11 +1,35 @@
 const mongoose = require("mongoose");
 
 const questionSchema = new mongoose.Schema({
-  questionText: { type: String, required: true },
-  options: { type: [String], required: true }, // Array of answer options
-  correctAnswer: { type: String, required: true }, // Correct answer text
-  difficultyLevel: { type: Number, required: true }, // Difficulty level (e.g., 1-5)
-  topics: { type: [String], required: true }, // Tags like "algebra", "geometry"
-}, { timestamps: true }); // Automatically track creation and update times
+  text: {
+    type: String,
+    required: true,
+  },
+  options: {
+    type: [String],
+    required: true,
+    validate: [array => array.length >= 2, "A question must have at least two options."],
+  },
+  correctOption: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: function (value) {
+        return value >= 0 && value < this.options.length;
+      },
+      message: "Invalid correctOption. Must be a valid index of the options array.",
+    },
+  },
+  difficultyLevel: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 10,
+  },
+  tags: {
+    type: [String],
+    default: [],
+  },
+});
 
 module.exports = mongoose.model("Question", questionSchema);
